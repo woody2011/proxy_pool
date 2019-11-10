@@ -42,26 +42,27 @@ DB_PASSWORD = getenv('db_password', '')
 """ 数据库配置 """
 DATABASES = {
     "default": {
-        "TYPE": DB_TYPE,
-        "HOST": DB_HOST,
-        "PORT": DB_PORT,
+        "TYPE": 'REDIS',
+        "HOST": '127.0.0.1',
+        "PORT": '6379',
         "NAME": "proxy",
-        "PASSWORD": DB_PASSWORD
+        "PASSWORD": '',
     }
 }
 
 # register the proxy getter function
 
 PROXY_GETTER = [
-    "freeProxy01",
-    "freeProxy02",
-    "freeProxy03",
-    "freeProxy04",
-    "freeProxy05",
-    "freeProxy06",
-    "freeProxy07",
-    "freeProxy08",
-    "freeProxy09",
+    #"freeProxy01",
+    #"freeProxy02",
+    #"freeProxy03",
+    #"freeProxy04",
+    #"freeProxy05",
+    #"freeProxy06",
+    #"freeProxy07",
+    #"freeProxy08",
+    #"freeProxy09",
+    "freeProxy007",
 ]
 
 """ API config http://127.0.0.1:5010 """

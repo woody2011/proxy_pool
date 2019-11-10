@@ -323,9 +323,48 @@ class GetFreeProxy(object):
             for proxy in proxies:
                 yield ':'.join(proxy)
 
+    @staticmethod
+    def freeProxy007():
+        """
+        guobanjia http://www.goubanjia.com/
+        :return:
+        """
+        url = "http://www.goubanjia.com/"
+        tree = getHtmlTree(url)
+        proxy_list = tree.xpath('//td[@class="ip"]')
+        # 此网站有隐藏的数字干扰，或抓取到多余的数字或.符号
+        # 需要过滤掉<p style="display:none;">的内容
+        xpath_str = """.//*[not(contains(@style, 'display: none'))
+                                        and not(contains(@style, 'display:none'))
+                                        and not(contains(@class, 'port'))
+                                        ]/text()
+                                """
+        for each_proxy in proxy_list:
+            try:
+                http_type = each_proxy.xpath('following-sibling::*[2]/a/text()')[0]
+                if http_type != 'https':
+                    continue
+                # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
+                ip_addr = ''.join(each_proxy.xpath(xpath_str))
+
+                # HTML中的port是随机数，真正的端口编码在class后面的字母中。
+                # 比如这个：
+                # <span class="port CFACE">9054</span>
+                # CFACE解码后对应的是3128。
+                port = 0
+                for _ in each_proxy.xpath(".//span[contains(@class, 'port')]"
+                                          "/attribute::class")[0]. \
+                        replace("port ", ""):
+                    port *= 10
+                    port += (ord(_) - ord('A'))
+                port /= 8
+
+                yield '{}:{}'.format(ip_addr, int(port))
+            except Exception as e:
+                pass
 
 if __name__ == '__main__':
-    from CheckProxy import CheckProxy
+    #from CheckProxy import CheckProxy
 
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy01)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy02)
@@ -339,4 +378,5 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy13)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy14)
 
-    CheckProxy.checkAllGetProxyFunc()
+    #CheckProxy.checkAllGetProxyFunc()
+    print(list(GetFreeProxy.freeProxy007()))
